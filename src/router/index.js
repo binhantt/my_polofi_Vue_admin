@@ -9,6 +9,11 @@ const routes = [
         path: "/admin/gioi-thieu",
         name: "adimn gioi thieu",
         component: () => import("../views/Gioithieu.vue"),
+    }, 
+    {
+        path: "/", 
+        name: "Login" , 
+        component: () => import("../views/Login.vue"),
     }
 ];
 const router = createRouter({

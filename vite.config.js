@@ -8,4 +8,9 @@ export default defineConfig({
     vue(), 
    
   ],
+  server: {
+    proxy: {
+        '/v1/admin': 'http://localhost:8000',
+    }
+}
 })

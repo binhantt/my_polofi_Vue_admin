@@ -9,13 +9,9 @@ export const Product = defineStore('product', {
 
   actions: {
     async get() {
-      try {
-        const response = await axios.get('http://localhost:3000/api/v1/user/sanpham');
+        const [response, err] = await axios.get('http://localhost:3000/api/v1/user/sanpham');
         this.data = response.data;
-        console.log('API call response:', response.data); 
-      } catch (error) {
-        console.error('API call error:', error);
-      }
+        console.log('API call response:', response.data);      
     }
   }
 });
