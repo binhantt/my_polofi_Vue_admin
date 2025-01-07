@@ -37,16 +37,13 @@ export default {
         };
     },
     methods: {
-        async Login() {
-            this.loginMessage = '';
-            console.log(this.p + " " + this.e);
-            const data = {
+        Login() {
+           
+            axios.get("http://localhost:8001/api/v1/admin/gioithieu", {
                 email: this.e,
                 password: this.p,
-            }
-            console.log(data);
-            const [error, req] = await axios.post("http://localhost:8000/api/v1/admin/", data );
-            console.log(error );
+            },
+            )
 
         }
     }

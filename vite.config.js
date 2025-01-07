@@ -13,4 +13,5 @@ export default defineConfig({
         '/v1/admin': 'http://localhost:8000',
     }
 }
+
 })

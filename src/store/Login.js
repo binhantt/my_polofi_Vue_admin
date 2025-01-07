@@ -1,19 +1,22 @@
+import { defineStore } from 'pinia';
 
-
-export default Login = defineStore ("login" , {
-    state: () => ({
-        count: 0,
-        data: null,
-      }),
-    
-      actions: {
-        async post() {
-            const [response, err] = await axios.post('http://localhost:3000/api/v1/user/sanpham', {
-                email: this.e,
-                password: this.p,
-            });
-            this.data = response.data;
-            console.log('API call response:', response.data);      
-        }
-      }
-})
+export const useUserStore = defineStore('user', {
+  state: () => ({
+    user: null, // Trạng thái người dùng (ví dụ: null hoặc đối tượng người dùng)
+    token: localStorage.getItem('token') || null, // Lưu token từ localStorage
+  }),
+  actions: {
+    setUser(user) {
+      this.user = user;
+    },
+    setToken(token) {
+      this.token = token;
+      localStorage.setItem('token', token); // Lưu token vào localStorage
+    },
+    logout() {
+      this.user = null;
+      this.token = null;
+      localStorage.removeItem('token'); // Xóa token khi logout
+    },
+  },
+});
