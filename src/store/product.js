@@ -9,9 +9,20 @@ export const Product = defineStore('product', {
 
   actions: {
     async get() {
-        const [response, err] = await axios.get('http://localhost:3000/api/v1/user/sanpham');
-        this.data = response.data;
-        console.log('API call response:', response.data);      
+       const req =  await axios.get('http://localhost:8001/api/v1/admin/gioithieu');
+        this.data = req.data;
+        console.log('API call response:', this.data);      
+    },
+     async deleteId(id) {
+      try {
+        await axios.delete(`http://localhost:8001/api/v1/admin/gioithieu/xoa/${id}`);
+        console.log('Item deleted:', id);
+      } catch (error) {
+        console.error('Có lỗi khi xóa dữ liệu:', error);
+      }
+       
     }
+    
   }
 });
+ 

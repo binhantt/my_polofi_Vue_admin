@@ -1,6 +1,6 @@
 <template>
-    <th>
+    <td class="w-full ">
         <slot>
         </slot>
-    </th>
+    </td>
 </template>

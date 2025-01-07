@@ -1,3 +1,6 @@
 import inputfornt from "./inputfornt.vue";
 import fornt from "./fornt.vue";
-export { inputfornt, fornt };
+import table_font from "./table_font.vue";
+import cols from "./cols.vue";
+import rows from "./rows.vue";
+export { inputfornt, fornt ,table_font  ,cols , rows };

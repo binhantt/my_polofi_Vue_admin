@@ -10,7 +10,7 @@ export const useCounterStore = defineStore('counter', {
   actions: {
     async get() {
       try {
-        const response = await axios.get('http://localhost:8001/api/v1/user/gioithieu');
+        const response = await axios.get('http://localhost:800q/api/v1/user/hoctap');
         this.data = response.data;
         console.log('API call response:', response.data); 
       } catch (error) {
