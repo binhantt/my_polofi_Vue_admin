@@ -20,9 +20,15 @@ export const Product = defineStore('product', {
       } catch (error) {
         console.error('Có lỗi khi xóa dữ liệu:', error);
       }
-       
-    }
-    
+    },
+    async  editProduct(id , data) {
+      try {
+        await axios.put(`http://localhost:8001/api/v1/admin/gioithieu/sua/${id}`, data);
+        console.log('Item updated:', id);
+      } catch (error) {
+        console.error('Có lỗi khi cập nhật dữ liệu:', error);
+      }
+    },
   }
 });
  
