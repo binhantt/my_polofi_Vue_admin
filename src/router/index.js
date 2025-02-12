@@ -11,6 +11,11 @@ const routes = [
         component: () => import("../views/Gioithieu.vue"),
     }, 
     {
+        path: "/admin/ngon-ngu",
+        name: "adimn ngon ngu",
+        component: () => import("../views/ngongu.vue"),
+    }, 
+    {
         path: "/", 
         name: "Login" , 
         component: () => import("../views/Login.vue"),

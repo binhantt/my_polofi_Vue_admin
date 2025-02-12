@@ -1,7 +1,7 @@
 import axios from 'axios';
 import { defineStore } from 'pinia';
 
-export const Product = defineStore('product', {
+export const ngonngu = defineStore('ngonngu', {
   state: () => ({
     count: 0,
     data: null,
@@ -9,7 +9,7 @@ export const Product = defineStore('product', {
 
   actions: {
     async get() {
-       const req =  await axios.get('http://localhost:8001/api/v1/admin/gioithieu');
+       const req =  await axios.get('http://localhost:8001/api/v1/admin/hoctap');
         this.data = req.data;
         console.log('API call response:', this.data);      
     },
@@ -21,7 +21,7 @@ export const Product = defineStore('product', {
         console.error('Có lỗi khi xóa dữ liệu:', error);
       }
     },
-    async  editProduct(id , data) {
+    async  editngongu(id , data) {
       try {
         await axios.put(`http://localhost:8001/api/v1/admin/gioithieu/sua/${id}`, data);
         console.log('Item updated:', id);
@@ -29,7 +29,7 @@ export const Product = defineStore('product', {
         console.error('Có lỗi khi cập nhật dữ liệu:', error);
       }
     },
-    async addProduct(data) {
+    async addngongu(data) {
       try {
         await axios.post('http://localhost:8001/api/v1/admin/gioithieu/them', data);
         console.log('Item added:', data);

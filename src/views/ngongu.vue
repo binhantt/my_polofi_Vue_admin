@@ -12,11 +12,13 @@
                     <cols>
                         <th class="w-full">ID</th>
                         <th class="w-full">Name</th>
+                        <th class="w-full">Anh</th>
                         <th class="w-full">Thao tác</th>
                     </cols>
                     <cols v-for="(ele, index) in store.data" :key="index">
                         <rows>{{ ele.id }}</rows>
-                        <rows>{{ ele.name }}</rows>
+                        <rows>{{ ele.title }}</rows>
+                        <rows><img :src="ele.icon_url" width="50" ></rows>
                         <rows>
                             <div class="w-full flex gap-3">
                                 <button @click="openEditModal(ele)" class="thaotac button is-link">Sửa</button>
@@ -51,7 +53,7 @@
 <script>
 import { ref, onMounted } from 'vue';
 import MasterLayout from '../components/Layout/masterLayout.vue';
-import { Product } from '../store/product';
+import { ngonngu } from '../store/ngonngu';
 import { cols, modal, rows, table_font } from '../components/base';
 import axios from 'axios';
 
@@ -65,7 +67,7 @@ export default {
         modal,
     },
     setup() {
-        const store = Product();
+        const store = ngonngu();
         const isEditOpen = ref(false); // Biến kiểm tra xem modal "Sửa" có đang mở không
         const isCreateOpen = ref(false);  // Biến kiểm tra xem modal "Thêm" có đang mở không
         const selectedEle = ref({ name: "", bio: "" }); // Biến chứa thông tin sản phẩm được chọn
