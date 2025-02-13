@@ -11,7 +11,7 @@ export const ngonngu = defineStore('ngonngu', {
     async get() {
        const req =  await axios.get('http://localhost:8001/api/v1/admin/hoctap');
         this.data = req.data;
-        console.log('API call response:', this.data);      
+        // console.log('API call response:', this.data);      
     },
      async deleteId(id) {
       try {
