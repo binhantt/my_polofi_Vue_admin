@@ -27,27 +27,19 @@
                         </rows>
                     </cols>
                 </table_font>
-                <div class=" flex gap-3">
-                    <button @click="prevPage" :disabled="currentPage === 1">Trang trước</button>
-                    <div class="flex justify-center ">
-                        <div class=" flex  gap-3 justify-betweenr items-center">
-                        <button class=" overscroll-none" @click="nextPage(i)"  v-for="(i, index) in totalPages " :key="index">
-                            <span v-if="i < parseInt(currentPage) - 2">
-                                {{ i }}
-                            </span>
-                            <span v-else-if="i == parseInt(currentPage)"
-                                :class="{ 'text-red-500': i == currentPage }">{{ i }}</span>
-                            <span v-else-if="i < parseInt(currentPage) + 2">{{ i }}</span>
-                        </button>
-
+                <div class="flex gap-3">
+                    <button @click="beforePage(currentPage)" :disabled="currentPage === 1">Trang trước</button>
+                    <div class="flex justify-center gap-3">
+                        <div v-for="(i, index) in buttonpage(totalPages ,currentPage)" :key="index" class="flex gap-3 justify-between items-center">
+                            <div>
+                                <button @click="prevPage(i)" :class="{'text-blue-500': currentPage == i} ">{{ i }}</button>
+                            </div>
+                        </div>
                     </div>
-                    </div>
-                    <button :disabled="currentPage === totalPages">Trang sau</button>
+                    <button :disabled="currentPage === 1" @click="nextPage(currentPage)">Trang sau</button>
                 </div>
-
             </div>
         </div>
-
         <!-- Modal Sửa -->
         <modal v-if="isEditOpen" title="Sửa Giới Thiệu" namebutton="Sửa" @click="updateItem(selectedEle.id)"
             @close="closeModal" :modal_body="'gap-3 flex flex-col justify-center bg-white w-[50%]'">
@@ -69,12 +61,11 @@
 </template>
 
 <script>
-import { ref, onMounted, computed, watchEffect } from 'vue';
+import { ref, onMounted } from 'vue';
 import MasterLayout from '../components/Layout/masterLayout.vue';
 import { ngonngu } from '../store/ngonngu';
 import { cols, modal, rows, table_font } from '../components/base';
-import axios from 'axios';
-import { useRoute } from 'vue-router'
+import { useRoute } from 'vue-router';
 
 export default {
     name: "Gioithieu",
@@ -88,53 +79,91 @@ export default {
     setup() {
         const router = useRoute();
         const store = ngonngu();
-        const selectedEle = ref({ name: "", bio: "" }); // Biến chứa thông tin sản phẩm được chọn
-        const isEditOpen = ref(false); // Biến kiểm tra xem modal "Sửa" có đang mở không
-        const isCreateOpen = ref(false);  // Biến kiểm tra xem modal "Thêm" có đang mở không
-        const totalPages = ref(10);
+        const selectedEle = ref({ name: "", bio: "" });
+        const isEditOpen = ref(false);
+        const isCreateOpen = ref(false);
+        const itemsPerPage = ref(3);
+        const items = ref([]);
         const currentPage = router.query.page ?? 1;
-        console.log("currentPage", currentPage);
+        const totalPages = ref() ; 
         const fetchData = async () => {
             await store.get();
-
+            totalPages.value = Math.ceil(store.data.length / itemsPerPage.value);
+            items.value = store.data.slice((currentPage - 1) * itemsPerPage.value, currentPage * itemsPerPage.value);
         };
-       
+        const buttonpage = (totalPages ,currentPage) => {
+            const pageafter = [];
+            const pagebefore = [];
+            const pagecurrent = [];
+            for (let i = 1; i <= totalPages; i++) {
+                if (i <= currentPage ) {
+                    pageafter.push(i);
+                    if (pageafter.length > 3) {
+                        pageafter.shift();
+                        console.log(pageafter);
+                    }
+                }else{
+                    pagebefore.push(i);
+                    if (pagebefore.length > 2) {
+                        pagebefore.pop();
+                        console.log(pagebefore);
+                    }
+                }
+            }
+            return [...pageafter ,...pagebefore ,...pagecurrent ];
+        };
+        const prevPage = (id) => {
+            window.location.href = `http://localhost:5173/admin/ngon-ngu?page=${id}`;
+        };
+
         const nextPage = (id) => {
-            window.location.href = `http://localhost:5173/admin/ngon-ngu?page=${id}`
-        }
+            const nowid = parseInt(id) + 1;
+            if(nowid > totalPages.value) {
+                return;
+            }
+            window.location.href = `http://localhost:5173/admin/ngon-ngu?page=${nowid}`;
+        };
+
+        const beforePage = (id) => {
+            const nowid = parseInt(id) - 1;
+            if(nowid < 1) {
+                return;
+            }
+            window.location.href = `http://localhost:5173/admin/ngon-ngu?page=${nowid}`;
+        };
+
         const deleteButton = async (index, id) => {
             store.data.splice(index, 1);
             await store.deleteId(id);
         };
 
         const openEditModal = (ele) => {
-            if (isCreateOpen.value) return; // Không mở nếu modal "Thêm" đang mở
+            if (isCreateOpen.value) return;
             selectedEle.value = { ...ele };
             isEditOpen.value = true;
         };
 
         const openCreateModal = () => {
-            if (isEditOpen.value) return; // Không mở nếu modal "Sửa" đang mở
+            if (isEditOpen.value) return;
             selectedEle.value = { name: "", bio: "" };
             isCreateOpen.value = true;
         };
 
         const updateItem = async (id) => {
-            //console.log(selectedEle.value);
             await store.editProduct(id, selectedEle.value);
             await store.get();
             isEditOpen.value = false;
         };
+
         const createItem = async () => {
             try {
                 await store.addProduct(selectedEle.value);
                 await store.get();
-                closeModal(); // Đóng modal ngay sau khi thêm
+                closeModal();
             } catch (error) {
                 console.error("Lỗi khi thêm sản phẩm:", error);
             }
         };
-
 
         const closeModal = () => {
             isEditOpen.value = false;
@@ -143,7 +172,6 @@ export default {
 
         onMounted(() => {
             fetchData();
-
         });
 
         return {
@@ -160,6 +188,11 @@ export default {
             currentPage,
             totalPages,
             nextPage,
+            items,
+            itemsPerPage,
+            prevPage,
+            beforePage,
+            buttonpage
         };
     },
 };
