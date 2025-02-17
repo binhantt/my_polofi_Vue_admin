@@ -71,6 +71,7 @@ export default {
         const selectedEle = ref({ name: "", bio: "" }); // Biến chứa thông tin sản phẩm được chọn
         const fetchData = async () => {
             await store.get();
+            con
         };
         const deleteButton = async (index, id) => {
             store.data.splice(index, 1);
