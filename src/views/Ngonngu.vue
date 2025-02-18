@@ -2,7 +2,7 @@
     <MasterLayout>
         <div class="bg-white rounded-lg shadow-sm p-6">
             <div class="flex justify-between items-center mb-6">
-                <h1 class="text-xl font-semibold">Quản lý Gioithieu</h1>
+                <h1 class="text-xl font-semibold">Quản lý ngôn ngữ</h1>
                 <button @click="openCreateModal" 
                     class="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors">
                     Thêm mới
@@ -23,10 +23,9 @@
                     <tbody class="divide-y divide-gray-200">
                         <tr v-for="(ele, index) in items" :key="index">
                             <td class="px-6 py-4 whitespace-nowrap">{{ ele.id }}</td>
-                            <td class="px-6 py-4 whitespace-nowrap">{{ ele.name }}</td>
-                            <td class="px-6 py-4 whitespace-nowrap">    
-                            <td class="px-6 py-4 whitespace-nowrap">{{ ele.bio}}</td>
-                               
+                            <td class="px-6 py-4 whitespace-nowrap">{{ ele.title }}</td>
+                            <td class="px-6 py-4 whitespace-nowrap">
+                                <img :src="ele.icon_url" class="w-10 h-10 object-cover rounded">
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap">
                                 <div class="flex gap-2">
@@ -76,25 +75,56 @@
                 </button>
             </div>
         </div>
-
-        <!-- Modal Sửa -->
+              <!-- Modal Thêm -->
         <Modal 
-            v-if="isEditOpen" 
-            title="Sua "
+            v-if="isCreateOpen" 
+            title="Thêm ngôn ngữ"
             @close="closeModal"
             :model="selectedEle"
         >
             <div class="p-6 space-y-4">
                 <form-input
-                    v-model="selectedEle.name"
-                    label="Tên"
-                    placeholder="Nhập tên giới thiệu"
+                    v-model="selectedEle.title"
+                    label="Tên ngôn ngữ"
+                    placeholder="Nhập tên ngôn ngữ"
                     class="w-full"
                 />
                 <form-input
-                    v-model="selectedEle.bio"
-                    label="Mô tả" 
-                    placeholder="Nhập mô tả"
+                    v-model="selectedEle.icon_url"
+                    label="Icon URL"
+                    placeholder="Nhập đường dẫn icon"
+                    class="w-full"
+                />
+                <input type="file" @change="handleFileChange" class="w-full">
+                <div class="flex justify-end mt-6">
+                    <button
+                        @click.stop="createItem"
+                        class="px-4 py-2 text-white bg-blue-500 rounded-lg hover:bg-blue-600"
+                    >
+                        Thêm mới
+                    </button>
+                </div>
+            </div>
+        </Modal>
+
+        <!-- Modal Sửa -->
+        <Modal 
+            v-if="isEditOpen" 
+            title="Sửa ngôn ngữ"
+            @close="closeModal"
+            :model="selectedEle"
+        >
+            <div class="p-6 space-y-4">
+                <form-input
+                    v-model="selectedEle.title"
+                    label="Tên ngôn ngữ"
+                    placeholder="Nhập tên ngôn ngữ"
+                    class="w-full"
+                />
+                <form-input
+                    v-model="selectedEle.icon_url"
+                    label="Icon URL" 
+                    placeholder="Nhập đường dẫn icon"
                     class="w-full"
                 />
                 <div class="flex justify-end mt-6">
@@ -102,56 +132,26 @@
                         @click.stop="updateItem(selectedEle.id)"
                         class="px-4 py-2 text-white bg-blue-500 rounded-lg hover:bg-blue-600"
                     >
-                       Sua
+                        Cập nhật
                     </button>
                 </div>
             </div>
         </Modal>
-
-        <!-- Modal Thêm -->
-        <Modal 
-            v-if="isCreateOpen" 
-            title="Thêm Giới Thiệu"
-            @close="closeModal"
-            :model="selectedEle"
-        >
-            <div class="p-6 space-y-4">
-                <form-input
-                    v-model="selectedEle.name"
-                    label="Tên"
-                    placeholder="Nhập tên giới thiệu"
-                    class="w-full"
-                />
-                <form-input
-                    v-model="selectedEle.bio"
-                    label="Mô tả" 
-                    placeholder="Nhập mô tả"
-                    class="w-full"
-                />
-                <div class="flex justify-end mt-6">
-                    <button
-                        @click.stop="createItem"
-                        class="px-4 py-2 text-white bg-blue-500 rounded-lg hover:bg-blue-600"
-                    >
-                        Thêm
-                    </button>
-                </div>
-            </div>
-        </Modal>
+      
     </MasterLayout>
 </template>
 
 <script>
 import { ref, onMounted, watch } from 'vue';
 import MasterLayout from '../components/Layout/masterLayout.vue';
-import { product } from '../store/product';
+import { ngonngu } from '../store/ngonngu';
 import { cols, modal, rows, table_font } from '../components/base';
 import { useRoute, useRouter } from 'vue-router';
 import FormInput from '../components/base/FormInput.vue';
 import Modal from '../components/base/modal.vue';
 
 export default {
-    name: "Gioithieu",
+    name: "Ngonngu",
     components: {
         MasterLayout,
         table_font,
@@ -159,32 +159,32 @@ export default {
         rows,
         Modal,
         FormInput,
+        Modal
     },
     setup() {
         const route = useRoute();
         const router = useRouter();
-        const store = product();
-        const selectedEle = ref({ name: "", bio: "" });
+        const store = ngonngu();
+        const selectedEle = ref({ 
+            title: "",
+            icon_url: ""
+        });
         const isEditOpen = ref(false);
         const isCreateOpen = ref(false);
-        const itemsPerPage = ref(2);
+        const itemsPerPage = ref(3);
         const items = ref([]);
         const page = ref([])
         const searchText = ref("");
-        const currentPage = ref(parseInt(route.query.product) || 1);
+        const currentPage = ref(parseInt(route.query.page) || 1);
         const totalPages = ref();
         const totalItems = ref(0);
 
         const updatePageData = () => {
-            if (!store.data) return;
-            
+            if (!store.data) return;           
             const start = (currentPage.value - 1) * itemsPerPage.value;
-            const end = start + itemsPerPage.value;
-            
+            const end = start + itemsPerPage.value;      
             items.value = store.data.slice(start, end);
             totalPages.value = Math.ceil(store.data.length / itemsPerPage.value);
-            
-            // Cập nhật số trang
             page.value = buttonpage(totalPages.value, currentPage.value);
         };
 
@@ -192,13 +192,11 @@ export default {
             await store.get();
             updatePageData();
         };
-        // tao trang va cap nhat trang 
         
         watch(() => route.query.page, (newPage) => {
             currentPage.value = parseInt(newPage) || 1;
             updatePageData();
         });
-
 
         const buttonpage = (totalPages, currentPage) => {
             const pageafter = [];
@@ -222,34 +220,30 @@ export default {
         const prevPage = (id) => {
             const page = parseInt(id);
             if(page > totalPages.value) return;
-            router.push({ path: '/admin/gioi-thieu', query: { page }});
+            router.push({ path: '/admin/ngon-ngu', query: { page }});
         };
 
         const nextPage = (id) => {
             const page = parseInt(id) + 1;
             if(page > totalPages.value) return;
-            router.push({ path: '/admin/gioi-thieu', query: { page }});
+            router.push({ path: '/admin/ngon-ngu', query: { page }});
         };
 
         const beforePage = (id) => {
             const page = parseInt(id) - 1;
             if(page < 1) return;
-            router.push({ path: '/admin/gioi-thieu', query: { page }});
+            router.push({ path: '/admin/ngon-ngu', query: { page }});
         };
         const searchClick =  () => {
             console.log(searchText.value)
         }
         const deleteButton = async (index, id) => {
             try {
+                console.log(id)
                 await store.deleteId(id);
-                updatePageData();
+
                 // Tải lại dữ liệu sau khi xóa
-                if (data.value.length === 1 && currentPage.value > 1) {
-                    // Nếu xóa item cuối cùng của trang hiện tại, chuyển về trang trước
-                    updateItem(currentPage.value - 1);
-                } else {
-                    await fetchData(currentPage.value);
-                }
+                await fetchData(currentPage.value);
             } catch (error) {
                 console.error("Lỗi khi xóa:", error);
             }
@@ -263,7 +257,10 @@ export default {
 
         const openCreateModal = () => {
             if (isEditOpen.value) return;
-            selectedEle.value = { name: "", bio: "" };
+            selectedEle.value = { 
+                title: "",
+                icon_url: ""
+            };
             isCreateOpen.value = true;
         };
 

@@ -12,10 +12,14 @@ export const ngonngu = defineStore('ngonngu', {
        const req =  await axios.get('http://localhost:8001/api/v1/admin/hoctap');
         this.data = req.data;
         // console.log('API call response:', this.data);      
+    }, 
+    async search(key) {
+        const req =  await axios.get(`http://localhost:8001/api/v1/admin/hoctap?key=${key}`);
+        this.data = req.data;
     },
      async deleteId(id) {
       try {
-        await axios.delete(`http://localhost:8001/api/v1/admin/gioithieu/xoa/${id}`);
+        await axios.delete(`http://localhost:8001/api/v1/admin/hoctap/xoa/${id}`);
         console.log('Item deleted:', id);
       } catch (error) {
         console.error('Có lỗi khi xóa dữ liệu:', error);
@@ -23,7 +27,7 @@ export const ngonngu = defineStore('ngonngu', {
     },
     async  editngongu(id , data) {
       try {
-        await axios.put(`http://localhost:8001/api/v1/admin/gioithieu/sua/${id}`, data);
+        await axios.put(`http://localhost:8001/api/v1/admin/hoctap/sua/${id}`, data);
         console.log('Item updated:', id);
       } catch (error) {
         console.error('Có lỗi khi cập nhật dữ liệu:', error);

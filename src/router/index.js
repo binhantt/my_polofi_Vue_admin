@@ -13,7 +13,7 @@ const routes = [
     {
         path: "/admin/ngon-ngu",
         name: "adimn ngon ngu",
-        component: () => import("../views/ngongu.vue"),
+        component: () => import("../views/Ngonngu.vue"),
     }, 
     {
         path: "/", 
